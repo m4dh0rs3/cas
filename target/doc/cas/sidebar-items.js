@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["cas","`CAS` – Computer Algebra SystemA `CAS` evaluates, simplifies and changes algebraic expressions like `2.3e-3*x^2=4/n!`. These expressions are split up into `Token`s (`Atom`s and `Op`erators) by the `Lexer`. The `Parser` rearanges them into S–Expressions, also known as Cons–Lists of the form `Expr = { Op ~ Expr }`"]]});
