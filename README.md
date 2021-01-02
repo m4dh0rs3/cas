@@ -1,7 +1,7 @@
 # `CAS`
 
 This is a `CAS` (=*Computer-Algebra-System*) written in Rust. It is basicaly a expandable calculator.
-You can enter expressions in the console and recive an evaluation. It provides error messanges of
+You can enter expressions in the console and receive an evaluation. It provides error messanges of
 invalid expressions. You can define variables and fuctions. It implements trigonometric and other
 helpful functions.
 
