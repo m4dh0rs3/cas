@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["E_TOKEN_LENGTH",""],["OP_BEGIN",""],["WHITESPACE",""]],"enum":[["Atom",""],["LexerErr",""],["Op",""],["Token",""]],"fn":[["is_digit",""]],"struct":[["Lexer",""],["Number",""],["Symbol",""]]});

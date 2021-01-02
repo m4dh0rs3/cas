@@ -1,3 +1,0 @@
-(function() {var implementors = {};
-implementors["cas"] = [{"text":"impl Clone for Token","synthetic":false,"types":[]},{"text":"impl Clone for Atom","synthetic":false,"types":[]},{"text":"impl Clone for Op","synthetic":false,"types":[]},{"text":"impl Clone for Number","synthetic":false,"types":[]},{"text":"impl Clone for Symbol","synthetic":false,"types":[]},{"text":"impl Clone for LexerErr","synthetic":false,"types":[]},{"text":"impl Clone for ParserErr","synthetic":false,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
