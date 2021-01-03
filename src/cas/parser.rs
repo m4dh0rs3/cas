@@ -177,15 +177,15 @@ fn postfix_bp(op: Op) -> Result<u8, ParserErr> {
 }
 
 impl Expr {
-    pub fn eval(&mut self, env: &mut Env) -> Result<f64, String> {
+    pub fn number(&mut self, env: &mut Env) -> Result<Number, String> {
         self.apply_env(env); // -> Assuming Ok, there should not be any symbol or function in root
 
-        Ok(match self {
+        Ok(Number(match self {
             Expr::Atom(Atom::Number(Number(number))) => *number,
             Expr::Call(Call { op, args }) => {
                 match &mut args[..] {
                     [arg] => {
-                        let arg = arg.eval(env)?;
+                        let arg = arg.number(env)?.0;
 
                         match op {
                             Op::Call(Symbol(call)) => match call.as_ref() {
@@ -227,18 +227,18 @@ impl Expr {
                     [first, second] => {
                         if let Expr::Atom(Atom::Symbol(Symbol(symbol))) = first {
                             if *op == Op::Def {
-                                let second = second.eval(env)?;
+                                let second = second.number(env)?;
 
                                 env.defs.insert(
                                     Symbol(symbol.clone()),
-                                    Def::Atom(Expr::Atom(Atom::Number(Number(second)))),
+                                    Def::Atom(Expr::Atom(Atom::Number(second.clone()))),
                                 );
 
                                 return Ok(second);
                             }
                         }
 
-                        let (first, second) = (first.eval(env)?, second.eval(env)?);
+                        let (first, second) = (first.number(env)?.0, second.number(env)?.0);
 
                         match op {
                             Op::Call(Symbol(call)) => match call.as_ref() {
@@ -270,7 +270,7 @@ impl Expr {
                     all => {
                         let mut args = Vec::new();
                         for expr in all {
-                            args.push(expr.eval(env)?);
+                            args.push(expr.number(env)?);
                         }
                         let all = args;
 
@@ -295,7 +295,7 @@ impl Expr {
                 }
             }
             _ => return Err(format!("`{}` is undefined", self)),
-        })
+        }))
     }
 
     fn apply_env(&mut self, env: &mut Env) {

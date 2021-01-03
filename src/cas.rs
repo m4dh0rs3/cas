@@ -63,8 +63,8 @@ impl Env {
                 }
             };
 
-            let result = match expr.clone().eval(self) {
-                Ok(number) => format!("{}", Number(number)),
+            let result = match expr.clone().number(self) {
+                Ok(number) => format!("{}", number),
                 Err(error) => error,
             };
 
