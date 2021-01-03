@@ -7,6 +7,7 @@ helpful functions.
 
 ### Goals
 
+- [ ] Support hex and binary numbers
 - [x] Lex algebraic expressions into a token-stream
 - [x] Parse token stream into a expression tree (cons list)
 - [x] Evaluate expression into a number

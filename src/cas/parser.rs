@@ -148,7 +148,7 @@ fn infix_bp(op: Op) -> Result<(u8, u8), ParserErr> {
         Op::Child => (16, 15),
         op => {
             return Err(ParserErr::Panic(format!(
-                "`{:?}` is not an infix operator",
+                "`{}` is not an infix operator",
                 op
             )))
         }
@@ -160,7 +160,7 @@ fn prefix_bp(op: Op) -> Result<u8, ParserErr> {
         Op::Add | Op::Sub => Ok(13),
         Op::Call(_) => Ok(10),
         op => Err(ParserErr::Panic(format!(
-            "`{:?}` is not an prefix operator",
+            "`{}` is not an prefix operator",
             op
         ))),
     }
@@ -170,14 +170,18 @@ fn postfix_bp(op: Op) -> Result<u8, ParserErr> {
     match op {
         Op::Fact => Ok(15),
         op => Err(ParserErr::Panic(format!(
-            "`{:?}` is not an postfix operator",
+            "`{}` is not an postfix operator",
             op
         ))),
     }
 }
 
+pub(crate) enum TypeErr {
+    Panic(String),
+}
+
 impl Expr {
-    pub fn number(&mut self, env: &mut Env) -> Result<Number, String> {
+    pub fn number(&mut self, env: &mut Env) -> Result<Number, TypeErr> {
         self.apply_env(env); // -> Assuming Ok, there should not be any symbol or function in root
 
         Ok(Number(match self {
@@ -185,69 +189,65 @@ impl Expr {
             Expr::Call(Call { op, args }) => {
                 match &mut args[..] {
                     [arg] => {
-                        let arg = arg.number(env)?.0;
+                        match arg.number(env) {
+                            Ok(Number(number)) => {
+                                match op {
+                                    Op::Call(Symbol(call)) => match call.as_ref() {
+                                        "sin" => number.sin(),
+                                        "asin" => number.asin(),
+                                        "sinh" => number.sinh(),
+                                        "asinh" => number.asinh(),
 
-                        match op {
-                            Op::Call(Symbol(call)) => match call.as_ref() {
-                                "sin" => arg.sin(),
-                                "asin" => arg.asin(),
-                                "sinh" => arg.sinh(),
-                                "asinh" => arg.asinh(),
+                                        "cos" => number.cos(),
+                                        "acos" => number.acos(),
+                                        "cosh" => number.cosh(),
+                                        "acosh" => number.acosh(),
 
-                                "cos" => arg.cos(),
-                                "acos" => arg.acos(),
-                                "cosh" => arg.cosh(),
-                                "acosh" => arg.acosh(),
+                                        "tan" => number.tan(),
+                                        "atan" => number.atan(),
+                                        "tanh" => number.tanh(),
+                                        "atanh" => number.atanh(),
 
-                                "tan" => arg.tan(),
-                                "atan" => arg.atan(),
-                                "tanh" => arg.tanh(),
-                                "atanh" => arg.atanh(),
+                                        "sqrt" => number.sqrt(),
 
-                                "sqrt" => arg.sqrt(),
-
-                                _ => {
-                                    return Err(format!(
-                                    "function `{}` is not defined, but maybe for more arguments",
-                                    call
-                                ))
+                                        _ => {
+                                            return Err(TypeErr::Panic(format!(
+                                                "function `{}`(x: number) is not defined",
+                                                call
+                                            )))
+                                        }
+                                    },
+                                    Op::Sub => -number,
+                                    Op::Add => number,
+                                    Op::Fact => todo!(), // Implement factorial for f64
+                                    _ => {
+                                        return Err(TypeErr::Panic(format!(
+                                            "operator `{}` on (x: number) is not defined",
+                                            op
+                                        )))
+                                    }
                                 }
-                            },
-                            Op::Sub => -arg,
-                            Op::Add => arg,
-                            Op::Fact => todo!(), // Implement factorial for f64
+                            }
+                            // Here implement functions of expressions
                             _ => {
-                                return Err(format!(
-                                    "operator `{}` is not defined for so much arguments, but maybe for more arguments",
+                                return Err(TypeErr::Panic(format!(
+                                    "function `{}`(x: expression) is not defined",
                                     op
-                                ))
+                                )))
                             }
                         }
                     }
-                    [first, second] => {
-                        if let Expr::Atom(Atom::Symbol(Symbol(symbol))) = first {
-                            if *op == Op::Def {
-                                let second = second.number(env)?;
-
-                                env.defs.insert(
-                                    Symbol(symbol.clone()),
-                                    Def::Atom(Expr::Atom(Atom::Number(second.clone()))),
-                                );
-
-                                return Ok(second);
-                            }
-                        }
-
-                        let (first, second) = (first.number(env)?.0, second.number(env)?.0);
-
-                        match op {
+                    [first, second] => match (first.number(env), second.number(env)) {
+                        (Ok(Number(first)), Ok(Number(second))) => match op {
                             Op::Call(Symbol(call)) => match call.as_ref() {
                                 "log" => first.log(second),
                                 "root" => first.powf(1.0 / second),
-                                _ => return Err(format!(
-                                    "function `{}` is not defined for two arguments, but maybe for one or more than two arguments",
-                                    call
-                                )),
+                                _ => {
+                                    return Err(TypeErr::Panic(format!(
+                                        "function `{}`(number, number) is not defined",
+                                        call
+                                    )))
+                                }
                             },
                             Op::Sub => first - second,
                             Op::Add => first + second,
@@ -261,12 +261,39 @@ impl Expr {
                             Op::Big => (first > second) as u8 as f64,
                             Op::SmallEq => (first <= second) as u8 as f64,
                             Op::BigEq => (first >= second) as u8 as f64,
-                            _ => return Err(format!(
-                                    "operator `{}` is not defined for two arguments, but maybe for one or more than two arguments",
+                            _ => {
+                                return Err(TypeErr::Panic(format!(
+                                    "operator `{}` on (number, number) is not defined",
                                     op
-                                )),
+                                )))
+                            }
+                        },
+                        (Err(_), Ok(second)) => match first.symbol(env) {
+                            Ok(symbol) => match op {
+                                Op::Def => {
+                                    env.defs.insert(
+                                        symbol.clone(),
+                                        Def::Atom(Expr::Atom(Atom::Number(second.clone()))),
+                                    );
+
+                                    second.0
+                                }
+                                _ => {
+                                    return Err(TypeErr::Panic(format!(
+                                        "operator `{}` on (symbol, number) not defined",
+                                        op
+                                    )))
+                                }
+                            },
+                            Err(error) => return Err(error),
+                        },
+                        _ => {
+                            return Err(TypeErr::Panic(format!(
+                                "`{}`({}, {}) not defined",
+                                op, first, second
+                            )))
                         }
-                    }
+                    },
                     all => {
                         let mut args = Vec::new();
                         for expr in all {
@@ -278,24 +305,31 @@ impl Expr {
                             Op::Call(Symbol(call)) => match call.as_ref() {
                                 "sum" => todo!(), // Implement sum!
                                 _ => {
-                                    return Err(format!(
+                                    return Err(TypeErr::Panic(format!(
                                         "function `{}` is not defined for so much arguments, but may be defined for less",
                                         call
-                                    ))
+                                    )))
                                 }
                             },
                             _ => {
-                                return Err(format!(
+                                return Err(TypeErr::Panic(format!(
                                     "operator `{}` is not defined for so much arguments, but may be defined for less",
                                     op
-                                ))
+                                )))
                             }
                         }
                     }
                 }
             }
-            _ => return Err(format!("`{}` is undefined", self)),
+            _ => return Err(TypeErr::Panic(format!("`{}` is undefined", self))),
         }))
+    }
+
+    fn symbol(&mut self, env: &Env) -> Result<Symbol, TypeErr> {
+        match self {
+            Expr::Atom(Atom::Symbol(symbol)) => Ok(symbol.clone()),
+            _ => Err(TypeErr::Panic(format!("expected symbol, found `{}`", self))),
+        }
     }
 
     fn apply_env(&mut self, env: &mut Env) {
@@ -374,6 +408,14 @@ impl fmt::Display for ParserErr {
             ParserErr::Panic(panic) => write!(f, "{}", panic),
             ParserErr::LexerErr(lexer_err) => write!(f, "{}", lexer_err),
             ParserErr::Empty => write!(f, "expression is empty"),
+        }
+    }
+}
+
+impl fmt::Display for TypeErr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TypeErr::Panic(panic) => write!(f, "{}", panic),
         }
     }
 }

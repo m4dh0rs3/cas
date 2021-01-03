@@ -1,6 +1,6 @@
 use std::{fmt, iter::Peekable, str::Chars};
 
-use super::{Def, Env};
+use crate::cas::{Def, Env};
 
 pub(crate) struct Lexer<'s, 'e> {
     input: &'s str,
@@ -29,7 +29,7 @@ impl<'s, 'e> Lexer<'s, 'e> {
 
         match &self.peek {
             Some(peek) => peek.as_ref(),
-            None => Err(&LexerErr::EOF),
+            None => Err(&LexerErr::EOF), // This should never happen
         }
     }
 
@@ -43,7 +43,7 @@ impl<'s, 'e> Lexer<'s, 'e> {
             }
             // TODO: Use Display trait instead?
             Err(LexerErr::Panic(format!(
-                "expected `{:?}`, found `{:?}`",
+                "expected `{:?}`, found `{}`",
                 chars, next
             )))
         } else {
@@ -60,22 +60,24 @@ impl<'s, 'e> Lexer<'s, 'e> {
             return token;
         }
 
-        Ok(match self.chars.peek().ok_or(LexerErr::EOF)? {
-            first if WHITESPACE.contains(*first) => {
+        let first = *self.chars.peek().ok_or(LexerErr::EOF)?;
+
+        Ok(match first {
+            first if WHITESPACE.contains(first) => {
                 self.eat(|c| WHITESPACE.contains(c));
                 self.advance()?
             }
 
-            first if OP_BEGIN.contains(*first) => Token::Op(Op::parse(self).map_err(|e| {
+            first if OP_BEGIN.contains(first) => Token::Op(Op::parse(self).map_err(|error| {
                 LexerErr::Panic(format!(
-                    "first character was indicating an operator, but {}",
-                    e
+                    "`{}` was indicating an operator, but {}",
+                    first, error
                 ))
             })?),
 
             'a'..='z' | 'A'..='Z' | 'α'..='ω' | 'Α'..='Ω' | '0'..='9' | '.' => {
-                match Atom::parse(self).map_err(|e| {
-                    LexerErr::Panic(format!("first character was indicating an atom, but {}", e))
+                match Atom::parse(self).map_err(|error| {
+                    LexerErr::Panic(format!("`{}` was indicating an atom, but {}", first, error))
                 })? {
                     Atom::Symbol(symbol) => match self.env.defs.get(&symbol) {
                         Some(Def::OSCall) => Token::Op(Op::Call(symbol)),
@@ -135,8 +137,11 @@ pub(crate) enum Atom {
 
 impl Atom {
     fn parse(lexer: &mut Lexer) -> Result<Atom, LexerErr> {
-        let first = lexer.chars.peek().ok_or(LexerErr::EOF).map_err(|e| {
-            LexerErr::Panic(format!("expected first character of an atom, but {}", e))
+        let first = lexer.chars.peek().ok_or(LexerErr::EOF).map_err(|error| {
+            LexerErr::Panic(format!(
+                "expected first character of an atom, but {}",
+                error
+            ))
         })?;
 
         Ok(match first {
@@ -174,12 +179,18 @@ pub(crate) enum Op {
 
 impl Op {
     fn parse(lexer: &mut Lexer) -> Result<Op, LexerErr> {
-        let first = lexer.chars.next().ok_or(LexerErr::EOF)?;
+        let first = lexer.chars.next().ok_or(LexerErr::EOF).map_err(|error| {
+            LexerErr::Panic(format!(
+                "expected first character of an operator, but {}",
+                error
+            ))
+        })?;
 
-        let string: String = match lexer.chars.peek() {
+        let string = match lexer.chars.peek() {
             Some(next) => match (first, next) {
                 ('=', '=') | ('!', '=') | ('~', '=') | (':', '=') | ('<', '=') | ('>', '=') => {
-                    let mut string = first.to_string();
+                    let mut string = String::with_capacity(2);
+                    string.push(first);
                     string.push(*next);
 
                     lexer.chars.next();
@@ -269,9 +280,9 @@ impl Symbol {
     fn parse(lexer: &mut Lexer) -> Result<Symbol, LexerErr> {
         let mut string = String::with_capacity(E_TOKEN_LENGTH);
 
-        if let Some(c) = lexer.chars.peek() {
+        if let Some(&c) = lexer.chars.peek() {
             if let 'α'..='ω' | 'Α'..='Ω' = c {
-                string.push(*c);
+                string.push(c);
                 lexer.chars.next();
                 return Ok(Symbol(string));
             }
@@ -279,9 +290,9 @@ impl Symbol {
 
         loop {
             match lexer.chars.peek() {
-                Some(c) => match c {
+                Some(&c) => match c {
                     'a'..='z' | 'A'..='Z' => {
-                        string.push(*c);
+                        string.push(c);
                         lexer.chars.next();
                     }
                     _ => break,

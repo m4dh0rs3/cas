@@ -65,7 +65,7 @@ impl Env {
 
             let result = match expr.clone().number(self) {
                 Ok(number) => format!("{}", number),
-                Err(error) => error,
+                Err(error) => format!("{}", error),
             };
 
             println!("{} ?= {}", expr, result);
@@ -96,7 +96,6 @@ impl Default for Env {
             Symbol(String::from("pi")),
             Def::Atom(Expr::Atom(Atom::Number(Number(std::f64::consts::PI)))),
         );
-
         env.defs.insert(
             Symbol(String::from("π")),
             Def::Atom(Expr::Atom(Atom::Number(Number(std::f64::consts::PI)))),
@@ -106,7 +105,6 @@ impl Default for Env {
             Symbol(String::from("tau")),
             Def::Atom(Expr::Atom(Atom::Number(Number(std::f64::consts::TAU)))),
         );
-
         env.defs.insert(
             Symbol(String::from("τ")),
             Def::Atom(Expr::Atom(Atom::Number(Number(std::f64::consts::TAU)))),
@@ -123,6 +121,16 @@ impl Default for Env {
                 Op::Call(Symbol(String::from("sqrt"))),
                 vec![Expr::Atom(Atom::Number(Number(-1.0)))],
             ))),
+        );
+
+        env.defs.insert(
+            Symbol(String::from("inf")),
+            Def::Atom(Expr::Atom(Atom::Number(Number(std::f64::INFINITY)))),
+        );
+
+        env.defs.insert(
+            Symbol(String::from("NaN")),
+            Def::Atom(Expr::Atom(Atom::Number(Number(std::f64::NAN)))),
         );
 
         env.defs.insert(Symbol(String::from("sin")), Def::OSCall);
