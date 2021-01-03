@@ -212,7 +212,7 @@ impl Expr {
 
                                         _ => {
                                             return Err(TypeErr::Panic(format!(
-                                                "function `{}`(x: number) is not defined",
+                                                "function `{}`(number) is not defined",
                                                 call
                                             )))
                                         }
@@ -222,7 +222,7 @@ impl Expr {
                                     Op::Fact => todo!(), // Implement factorial for f64
                                     _ => {
                                         return Err(TypeErr::Panic(format!(
-                                            "operator `{}` on (x: number) is not defined",
+                                            "operator `{}` on (number) is not defined",
                                             op
                                         )))
                                     }
@@ -231,7 +231,7 @@ impl Expr {
                             // Here implement functions of expressions
                             _ => {
                                 return Err(TypeErr::Panic(format!(
-                                    "function `{}`(x: expression) is not defined",
+                                    "function `{}`(expression) is not defined",
                                     op
                                 )))
                             }
@@ -287,12 +287,7 @@ impl Expr {
                             },
                             Err(error) => return Err(error),
                         },
-                        _ => {
-                            return Err(TypeErr::Panic(format!(
-                                "`{}`({}, {}) not defined",
-                                op, first, second
-                            )))
-                        }
+                        _ => return Err(TypeErr::Panic(format!("`{}`(x, y) not defined", op))),
                     },
                     all => {
                         let mut args = Vec::new();
