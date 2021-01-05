@@ -37,7 +37,7 @@ impl Expr {
         }
     }
 
-    fn number(&self, env: &mut Env) -> Result<Number, TypeErr> {
+    pub(crate) fn number(&self, env: &mut Env) -> Result<Number, TypeErr> {
         match self {
             Expr::Atom(Atom::Number(number)) => Ok(number.clone()),
             Expr::Atom(Atom::Symbol(symbol)) => {
@@ -52,7 +52,7 @@ impl Expr {
         }
     }
 
-    fn eval(&self, env: &mut Env) -> Result<Expr, TypeErr> {
+    pub(crate) fn eval(&self, env: &mut Env) -> Result<Expr, TypeErr> {
         match self {
             Expr::Call(Call { op, args }) => {
                 if let Op::Call(call) = op {

@@ -14,7 +14,7 @@ pub(crate) enum ParserErr {
 }
 
 impl Expr {
-    fn parse(input: &str, env: &Env) -> Result<Expr, ParserErr> {
+    pub(crate) fn parse(input: &str, env: &Env) -> Result<Expr, ParserErr> {
         let mut lexer = Lexer::new(input, env);
 
         if let Err(LexerErr::EOF) = lexer.peek() {
