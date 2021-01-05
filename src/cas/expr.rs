@@ -47,7 +47,6 @@ impl Expr {
                     Err(TypeErr(format!("`{}` is not a number", self)))
                 }
             }
-            // ?????
             _ => self.eval(env)?.number(env),
         }
     }
@@ -61,16 +60,13 @@ impl Expr {
                         call: expr,
                     } = env.get(&call)?.clone()
                     {
-                        let mut args = args.clone();
                         let mut vars = Env::new();
 
-                        for (var, symbol) in
-                            args.remove(0).list().into_iter().zip(symbols.into_iter())
-                        {
-                            vars.insert(symbol, Def::Expr(var));
+                        for (var, symbol) in args.into_iter().zip(symbols.into_iter()) {
+                            vars.insert(symbol, Def::Expr(var.clone()));
                         }
 
-                        return expr.apply_env(env);
+                        return expr.apply_env(&mut vars);
                     }
                 }
 
@@ -237,7 +233,7 @@ impl Expr {
                     self.clone()
                 }
             }
-            Expr::Call(Call { op: op, args }) => {
+            Expr::Call(Call { op, args }) => {
                 let mut nodes = Vec::new();
                 for expr in args {
                     nodes.push(expr.apply_env(env)?);

@@ -108,8 +108,8 @@ impl fmt::Display for Op {
                 Op::LessEq => "<=",
                 Op::MoreEq => ">=",
                 Op::List => ";",
-                Op::Open => "{",
-                Op::Close => "}",
+                Op::Open => "(",
+                Op::Close => ")",
                 Op::Child => "_",
                 Op::Call(string) => &string.0,
             }
