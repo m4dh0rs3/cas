@@ -1,8 +1,11 @@
-use super::env::{Def, Env};
-use super::expr::atom::Atom;
-use super::expr::call::op::Op;
-use super::parser::ParserErr;
-use std::{iter::Peekable, str::CharIndices};
+use {
+    super::{
+        env::{Def, Env},
+        expr::{atom::Atom, call::op::Op},
+        parser::ParserErr,
+    },
+    std::{iter::Peekable, str::CharIndices},
+};
 
 pub(crate) struct Lexer<'s, 'e> {
     input: &'s str,

@@ -1,7 +1,7 @@
-use std::ops;
-
-use super::super::symbol::Symbol;
-use super::Number;
+use {
+    super::{super::symbol::Symbol, Number},
+    std::ops,
+};
 
 impl ops::Add for Number {
     type Output = Number;

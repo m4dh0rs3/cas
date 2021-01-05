@@ -1,17 +1,14 @@
-use self::atom::{number::Number, symbol::Symbol};
-
-use super::{
-    env::{Def, Env},
-    lexer::E_TOKEN_LEN,
+use {
+    super::{
+        env::{Def, Env},
+        lexer::E_TOKEN_LEN,
+    },
+    atom::{number::Number, symbol::Symbol, Atom},
+    call::{op::Op, Call},
 };
 
 pub(crate) mod atom;
 pub(crate) mod call;
-
-use {
-    atom::Atom,
-    call::{op::Op, Call},
-};
 
 #[derive(Clone, PartialEq)]
 pub(crate) enum Expr {

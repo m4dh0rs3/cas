@@ -1,5 +1,8 @@
-use super::super::lexer::{Lexer, LexerErr};
-use {number::Number, symbol::Symbol};
+use {
+    super::super::lexer::{Lexer, LexerErr},
+    number::Number,
+    symbol::Symbol,
+};
 
 pub(crate) mod number;
 pub(crate) mod symbol;

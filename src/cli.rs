@@ -1,9 +1,13 @@
-use std::{io, io::Write};
-
-use super::cas::env::Def;
-use super::cas::env::Env;
-use super::cas::expr::atom::{symbol::Symbol, Atom};
-use super::cas::expr::Expr;
+use {
+    super::cas::{
+        env::{Def, Env},
+        expr::{
+            atom::{symbol::Symbol, Atom},
+            Expr,
+        },
+    },
+    std::{io, io::Write},
+};
 
 mod display;
 

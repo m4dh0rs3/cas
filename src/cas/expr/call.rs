@@ -1,6 +1,6 @@
-pub(crate) mod op;
-
 use {super::Expr, op::Op};
+
+pub(crate) mod op;
 
 #[derive(Clone, PartialEq)]
 pub(crate) struct Call {

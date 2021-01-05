@@ -1,11 +1,10 @@
-use super::expr::{atom::number::Number, TypeErr};
-use super::expr::{atom::symbol::Symbol, call::Call};
-use super::expr::{atom::Atom, Expr};
-use super::parser::ParserErr;
-use std::collections::HashMap;
-use std::fs;
-use std::io;
-use std::io::BufRead;
+use {
+    super::{
+        expr::{atom::symbol::Symbol, Expr, TypeErr},
+        parser::ParserErr,
+    },
+    std::{collections::HashMap, fs, io, io::BufRead},
+};
 
 pub(crate) struct Env(pub(crate) HashMap<Symbol, Def>);
 

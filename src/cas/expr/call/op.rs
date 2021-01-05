@@ -1,5 +1,7 @@
-use super::super::super::expr::atom::symbol::Symbol;
-use super::super::super::lexer::{Lexer, LexerErr};
+use super::super::super::{
+    expr::atom::symbol::Symbol,
+    lexer::{Lexer, LexerErr},
+};
 
 #[derive(Clone, PartialEq)]
 pub(crate) enum Op {

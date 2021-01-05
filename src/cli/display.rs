@@ -1,16 +1,15 @@
-use std::fmt;
-
-use crate::cas::expr::{
-    atom::{number::Number, symbol::Symbol, Atom},
-    Expr,
+use {
+    crate::cas::{
+        expr::{
+            atom::{number::Number, symbol::Symbol, Atom},
+            call::{op::Op, Call},
+            Expr, TypeErr,
+        },
+        lexer::{LexerErr, Token},
+        parser::ParserErr,
+    },
+    std::fmt,
 };
-use crate::cas::expr::{
-    call::{op::Op, Call},
-    TypeErr,
-};
-use crate::cas::lexer::LexerErr;
-use crate::cas::lexer::Token;
-use crate::cas::parser::ParserErr;
 
 impl fmt::Display for LexerErr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
