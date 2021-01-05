@@ -1,7 +1,11 @@
 use super::expr::{atom::number::Number, TypeErr};
 use super::expr::{atom::symbol::Symbol, call::Call};
 use super::expr::{atom::Atom, Expr};
+use super::parser::ParserErr;
 use std::collections::HashMap;
+use std::fs;
+use std::io;
+use std::io::BufRead;
 
 pub(crate) struct Env(pub(crate) HashMap<Symbol, Def>);
 
@@ -30,10 +34,27 @@ impl Env {
     pub(crate) fn remove(&mut self, symbol: Symbol) -> Option<Def> {
         self.0.remove(&symbol)
     }
+
+    pub(crate) fn load(path: &str) -> Result<Env, String> {
+        let mut env = Env::new();
+
+        let mut file = fs::File::open(path).map_err(|error| format!("{:?}", error))?;
+        for input in io::BufReader::new(file).lines() {
+            let expr = match Expr::parse(&input.map_err(|error| format!("{:?}", error))?, &env) {
+                Ok(expr) => expr,
+                Err(ParserErr::Empty) => continue,
+                Err(error) => return Err(format!("{}", error)),
+            };
+
+            expr.eval(&mut env).map_err(|error| format!("{}", error))?;
+        }
+
+        Ok(env)
+    }
 }
 
 impl Default for Env {
     fn default() -> Self {
-        Env::new()
+        Env::load("default_env.txt").unwrap()
     }
 }

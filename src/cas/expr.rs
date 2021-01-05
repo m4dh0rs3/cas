@@ -152,7 +152,6 @@ impl Expr {
                     let call = call.symbol()?;
                     let mut symbols = Vec::new();
 
-                    // Optimize clone?
                     for symbol in &list.clone().list() {
                         symbols.push(symbol.symbol()?);
                     }
@@ -165,7 +164,7 @@ impl Expr {
                         },
                     );
 
-                    Ok(Expr::Atom(Atom::Symbol(Symbol(format!("None")))))
+                    Ok(Expr::Atom(Atom::Symbol(Symbol(format!("Def")))))
                 } else {
                     Err(TypeErr(format!(
                         "op `{}` is undefined on (symbol / symbol(symbols, ...), expr)",
@@ -175,8 +174,15 @@ impl Expr {
             }
 
             Expr::Atom(Atom::Symbol(symbol)) => {
-                env.insert(symbol.clone(), Def::Expr(y.clone()));
-                Ok(Expr::Atom(Atom::Symbol(Symbol(format!("None")))))
+                env.insert(
+                    symbol.clone(),
+                    match y {
+                        Expr::Atom(Atom::Symbol(Symbol(call))) if call == "OSCall" => Def::OSCall,
+                        _ => Def::Expr(y.clone()),
+                    },
+                );
+
+                Ok(Expr::Atom(Atom::Symbol(Symbol(format!("Def")))))
             }
 
             _ => Err(TypeErr(format!(
