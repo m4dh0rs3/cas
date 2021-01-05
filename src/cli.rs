@@ -55,7 +55,7 @@ impl REPL {
             };
 
             match result.number(&mut repl.env) {
-                Ok(number) => println!("\u{1b}[31;1m|≈\u{1b}[0m {}", number),
+                Ok(number) => println!("\u{1b}[91;1m|≈\u{1b}[0m {}", number),
                 Err(_) => println!("\u{1b}[31;1m|=\u{1b}[0m {}", &result),
             }
 
