@@ -77,13 +77,11 @@ impl Number {
     }
 
     pub(crate) fn fact(mut self) -> Number {
-        if self.modulus(Number(2.0)) == Number(0.0) {
-            for n in 1..(self.0 as u32) {
-                self = self * Number(n as f64)
-            }
+        if self.0 <= 0.0 || self.0 == 1.0 {
+            return Number(1.0);
         }
 
-        self
+        self * (self - Number(1.0)).fact()
     }
 
     pub(crate) fn ln(self) -> Number {

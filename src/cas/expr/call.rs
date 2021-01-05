@@ -2,7 +2,7 @@ pub(crate) mod op;
 
 use {super::Expr, op::Op};
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub(crate) struct Call {
     pub(crate) op: Op,
     pub(crate) args: Vec<Expr>,

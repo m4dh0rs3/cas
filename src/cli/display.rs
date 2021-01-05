@@ -14,16 +14,22 @@ use crate::cas::parser::ParserErr;
 
 impl fmt::Display for LexerErr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "could not parse token: ")?;
+
         match self {
             // maybe before: "could not parse token: "
-            LexerErr::Panic { msg, at } => write!(f, "{}", msg),
-            LexerErr::EOF => write!(f, "reached `EOF`"),
+            LexerErr::Panic { msg, at } => {
+                write!(f, "{}", msg)
+            }
+            LexerErr::EOF => write!(f, "reached `{}`", &Op::Call(Symbol(String::from("EOF")))),
         }
     }
 }
 
 impl fmt::Display for ParserErr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "could not parse expr: ")?;
+
         match self {
             ParserErr::Panic(msg) => write!(f, "{}", msg),
             ParserErr::LexerErr(msg) => write!(f, "{}", msg),

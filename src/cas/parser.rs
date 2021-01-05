@@ -131,7 +131,7 @@ fn infix_bp(op: &Op) -> Option<(u8, u8)> {
         Op::Add | Op::Sub => (9, 10),
         Op::Mul | Op::Div => (11, 12),
         Op::Pow => (14, 13),
-        Op::Child => (16, 15),
+        Op::Child => (15, 16),
         _ => return None,
     })
 }

@@ -13,7 +13,7 @@ use {
     call::{op::Op, Call},
 };
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub(crate) enum Expr {
     Atom(Atom),
     Call(Call),
@@ -123,7 +123,7 @@ impl Expr {
             "sqrt" => Expr::Atom(Atom::Number(x.number(env)?.sqrt())),
             "cbrt" => Expr::Atom(Atom::Number(x.number(env)?.cbrt())),
 
-            _ => return Err(TypeErr(format!("call `{}` is undefined on (expr)", call))),
+            _ => return Err(TypeErr(format!("call `{}` undefined on (expr)", call))),
         })
     }
 
@@ -131,7 +131,9 @@ impl Expr {
         Ok(match op {
             Op::Call(call) => Expr::eval_call_two(call, x, y, env)?,
 
-            Op::Def => Expr::eval_def(x, y, env)?,
+            Op::Def => Expr::def(x, y, env)?,
+
+            Op::Child => Expr::child(x, y, env)?,
 
             Op::Add => Expr::Atom(Atom::Number(x.number(env)? + y.number(env)?)),
             Op::Sub => Expr::Atom(Atom::Number(x.number(env)? - y.number(env)?)),
@@ -139,13 +141,34 @@ impl Expr {
             Op::Div => Expr::Atom(Atom::Number(x.number(env)? / y.number(env)?)),
             Op::Pow => Expr::Atom(Atom::Number(x.number(env)?.pow(y.number(env)?))),
             Op::Mod => Expr::Atom(Atom::Number(x.number(env)?.modulus(y.number(env)?))),
+
             Op::Eq => Expr::Atom(Atom::Symbol(x.number(env)?.equal(y.number(env)?))),
 
             _ => return Err(TypeErr(format!("op `{}` undefined on (expr, expr)", op))),
         })
     }
 
-    fn eval_def(x: &Expr, y: &Expr, env: &mut Env) -> Result<Expr, TypeErr> {
+    fn expr(&self, env: &mut Env) -> Result<Expr, TypeErr> {
+        match self {
+            Expr::Atom(Atom::Symbol(symbol)) => match env.get(symbol) {
+                Ok(Def::Expr(expr)) => Ok(expr.clone()),
+                _ => Err(TypeErr(format!("`{}` is an undefined symbol", symbol))),
+            },
+            _ => Ok(self.clone()),
+        }
+    }
+
+    fn child(parent: &Expr, index: &Expr, env: &mut Env) -> Result<Expr, TypeErr> {
+        let index = index.number(env)?;
+        let parent = parent.expr(env)?.list();
+
+        Ok(parent
+            .get(index.0 as usize)
+            .ok_or(TypeErr(format!("op `{}` index out of bounds", Op::Child)))?
+            .clone())
+    }
+
+    fn def(x: &Expr, y: &Expr, env: &mut Env) -> Result<Expr, TypeErr> {
         match x {
             Expr::Call(Call { op: Op::Mul, args }) => {
                 if let [call, list] = &args[..] {

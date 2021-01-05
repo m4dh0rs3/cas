@@ -1,19 +1,19 @@
 use std::{io, io::Write};
 
+use super::cas::env::Def;
 use super::cas::env::Env;
+use super::cas::expr::atom::{symbol::Symbol, Atom};
 use super::cas::expr::Expr;
 
 mod display;
 
 pub struct REPL {
-    ans: Option<Expr>,
     env: Env,
 }
 
 impl REPL {
     pub fn start() {
         let mut repl = REPL {
-            ans: None,
             env: Env::default(),
         };
 
@@ -44,17 +44,27 @@ impl REPL {
                 }
             };
 
+            println!("\u{1b}[94;1m|:\u{1b}[0m {}", &expr);
+
             let result = match expr.eval(&mut repl.env) {
-                Ok(expr) => format!("{}", expr),
-                Err(error) => format!("{}", error),
+                Ok(expr) => expr,
+                Err(error) => {
+                    println!("\u{1b}[31;1mError:\u{1b}[0m {}", error);
+                    continue;
+                }
             };
 
-            let number = match expr.number(&mut repl.env) {
-                Ok(number) => format!("{}", number),
-                Err(error) => format!("{}", error),
-            };
+            match result.number(&mut repl.env) {
+                Ok(number) => println!("\u{1b}[31;1m|≈\u{1b}[0m {}", number),
+                Err(_) => println!("\u{1b}[31;1m|=\u{1b}[0m {}", &result),
+            }
 
-            println!("{} =? {} = {}", expr, result, number);
+            println!();
+
+            if &result != &Expr::Atom(Atom::Symbol(Symbol(String::from("ans")))) {
+                repl.env
+                    .insert(Symbol("ans".to_string()), Def::Expr(result));
+            }
         }
     }
 }
