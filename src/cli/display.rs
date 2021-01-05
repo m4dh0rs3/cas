@@ -67,23 +67,23 @@ impl fmt::Display for Atom {
 
 impl fmt::Display for Call {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}", self.op)?;
+        write!(f, "(\u{1b}[0m{}", self.op)?;
         for expr in &self.args {
             write!(f, " {}", expr)?
         }
-        write!(f, ")")
+        write!(f, ")\u{1b}[0m")
     }
 }
 
 impl fmt::Display for Number {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "\u{1b}[91m{}\u{1b}[0m", self.0)
     }
 }
 
 impl fmt::Display for Symbol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "\u{1b}[96m{}\u{1b}[0m", self.0)
     }
 }
 
@@ -91,7 +91,7 @@ impl fmt::Display for Op {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "{}",
+            "\u{1b}[92;1m{}\u{1b}[0m",
             match self {
                 Op::Add => "+",
                 Op::Sub => "-",

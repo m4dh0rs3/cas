@@ -17,18 +17,18 @@ impl REPL {
             env: Env::default(),
         };
 
-        println!("\n\u{1b}[31m\u{1b}[1mCAS\u{1b}[0m `Ctrl+C` to quit");
+        println!("\n\u{1b}[31;1mCAS\u{1b}[0m `Ctrl+C` to quit");
 
         loop {
             let mut input = String::new();
 
-            print!("\u{1b}[1m\u{1b}[34m|>\u{1b}[0m ");
+            print!("\u{1b}[93;1m|>\u{1b}[0m ");
             io::stdout().flush().unwrap();
 
             match io::stdin().read_line(&mut input) {
                 Err(error) => {
                     println!(
-                        "\u{1b}[31m\u{1b}[1mError:\u{1b}[0m Failed to read line: {:?}",
+                        "\u{1b}[31;1mError:\u{1b}[0m Failed to read line: {:?}",
                         error
                     );
                     continue;
@@ -39,7 +39,7 @@ impl REPL {
             let expr = match Expr::parse(&input, &repl.env) {
                 Ok(expr) => expr,
                 Err(error) => {
-                    println!("\u{1b}[31m\u{1b}[1mError:\u{1b}[0m {}", error);
+                    println!("\u{1b}[31;1mError:\u{1b}[0m {}", error);
                     continue;
                 }
             };
