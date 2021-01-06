@@ -5,7 +5,7 @@ simplify, differentiate, integrate and solve* algebraic expressions. This is a c
 
 ### Features
 
-**Warning: This crate is not yet feature-complete. See [libqalculate](https://github.com/Qalculate/libqalculate) for a better alternative.**
+**Warning: This is not yet feature-complete. See [libqalculate](https://github.com/Qalculate/libqalculate) for a better alternative.**
 
 - [X] REPL interface
 - [X] Lex operators, functions, symbols, deciaml numbers
