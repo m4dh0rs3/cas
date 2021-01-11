@@ -16,25 +16,25 @@ pub enum Def {
 }
 
 impl Env {
-    pub(crate) fn new() -> Env {
+    pub fn new() -> Env {
         Env(HashMap::new())
     }
 
-    pub(crate) fn get(&self, symbol: &Symbol) -> Result<&Def, TypeErr> {
+    pub fn get(&self, symbol: &Symbol) -> Result<&Def, TypeErr> {
         self.0
             .get(symbol)
             .ok_or_else(|| TypeErr(format!("`{}` is undefined", symbol)))
     }
 
-    pub(crate) fn insert(&mut self, symbol: Symbol, def: Def) -> Option<Def> {
+    pub fn insert(&mut self, symbol: Symbol, def: Def) -> Option<Def> {
         self.0.insert(symbol, def)
     }
 
-    pub(crate) fn remove(&mut self, symbol: Symbol) -> Option<Def> {
+    pub fn remove(&mut self, symbol: Symbol) -> Option<Def> {
         self.0.remove(&symbol)
     }
 
-    pub(crate) fn load(path: &str) -> Result<Env, String> {
+    pub fn load(path: &str) -> Result<Env, String> {
         let mut env = Env::new();
 
         let file = fs::File::open(path).map_err(|error| format!("{:?}", error))?;
