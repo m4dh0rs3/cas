@@ -5,7 +5,7 @@ use super::super::super::lexer::{
 mod ops;
 
 #[derive(Clone, Copy, PartialEq)]
-pub(crate) struct Number(pub(crate) f64);
+pub struct Number(pub(crate) f64);
 
 impl Number {
     pub(crate) fn parse(lexer: &mut Lexer) -> Result<Number, LexerErr> {

@@ -6,10 +6,10 @@ use {
     std::{collections::HashMap, fs, io, io::BufRead},
 };
 
-pub(crate) struct Env(pub(crate) HashMap<Symbol, Def>);
+pub struct Env(pub(crate) HashMap<Symbol, Def>);
 
 #[derive(Clone)]
-pub(crate) enum Def {
+pub enum Def {
     Expr(Expr),
     Call { args: Vec<Symbol>, call: Expr },
     OSCall,
@@ -37,7 +37,7 @@ impl Env {
     pub(crate) fn load(path: &str) -> Result<Env, String> {
         let mut env = Env::new();
 
-        let mut file = fs::File::open(path).map_err(|error| format!("{:?}", error))?;
+        let file = fs::File::open(path).map_err(|error| format!("{:?}", error))?;
         for input in io::BufReader::new(file).lines() {
             let expr = match Expr::parse(&input.map_err(|error| format!("{:?}", error))?, &env) {
                 Ok(expr) => expr,
@@ -54,6 +54,6 @@ impl Env {
 
 impl Default for Env {
     fn default() -> Self {
-        Env::load("default_env.txt").unwrap()
+        Env::load("default_env.txt").unwrap_or_else(|_| Env::new())
     }
 }

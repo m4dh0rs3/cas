@@ -1,3 +1,5 @@
+use cas::prelude::*;
+
 fn main() {
-    cas::REPL::start();
+    REPL::start();
 }

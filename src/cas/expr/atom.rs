@@ -8,7 +8,7 @@ pub(crate) mod number;
 pub(crate) mod symbol;
 
 #[derive(Clone, PartialEq)]
-pub(crate) enum Atom {
+pub enum Atom {
     Number(Number),
     Symbol(Symbol),
 }

@@ -32,7 +32,7 @@ impl REPL {
             match io::stdin().read_line(&mut input) {
                 Err(error) => {
                     println!(
-                        "\u{1b}[31;1mError:\u{1b}[0m Failed to read line: {:?}",
+                        "\u{1b}[31;1mError:\u{1b}[0m Failed to read line: {:?}\n",
                         error
                     );
                     continue;
@@ -43,7 +43,7 @@ impl REPL {
             let expr = match Expr::parse(&input, &repl.env) {
                 Ok(expr) => expr,
                 Err(error) => {
-                    println!("\u{1b}[31;1mError:\u{1b}[0m {}", error);
+                    println!("\u{1b}[31;1mError:\u{1b}[0m {}\n", error);
                     continue;
                 }
             };
@@ -53,14 +53,14 @@ impl REPL {
             let result = match expr.eval(&mut repl.env) {
                 Ok(expr) => expr,
                 Err(error) => {
-                    println!("\u{1b}[31;1mError:\u{1b}[0m {}", error);
+                    println!("\u{1b}[31;1mError:\u{1b}[0m {}\n", error);
                     continue;
                 }
             };
 
             match result.number(&mut repl.env) {
                 Ok(number) => println!("\u{1b}[91;1m|≈\u{1b}[0m {}", number),
-                Err(_) => println!("\u{1b}[31;1m|=\u{1b}[0m {}", &result),
+                Err(_) => { /* println!("\u{1b}[31;1m|=\u{1b}[0m {}", &result) */ }
             }
 
             println!();

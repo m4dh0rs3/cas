@@ -11,12 +11,12 @@ pub(crate) mod atom;
 pub(crate) mod call;
 
 #[derive(Clone, PartialEq)]
-pub(crate) enum Expr {
+pub enum Expr {
     Atom(Atom),
     Call(Call),
 }
 
-pub(crate) struct TypeErr(pub(crate) String);
+pub struct TypeErr(pub(crate) String);
 
 impl Expr {
     pub(crate) fn list(self) -> Vec<Expr> {

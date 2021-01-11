@@ -1,7 +1,7 @@
 use super::super::super::lexer::{Lexer, LexerErr, E_TOKEN_LEN};
 
 #[derive(Clone, PartialEq, Eq, Hash)]
-pub(crate) struct Symbol(pub(crate) String);
+pub struct Symbol(pub(crate) String);
 
 impl Symbol {
     pub(crate) fn parse(lexer: &mut Lexer) -> Result<Symbol, LexerErr> {
