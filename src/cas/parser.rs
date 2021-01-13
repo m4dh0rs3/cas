@@ -7,7 +7,7 @@ use super::{
     lexer::{Lexer, LexerErr, Token},
 };
 
-pub(crate) enum ParserErr {
+pub enum ParserErr {
     Empty,
     LexerErr(LexerErr),
     Panic(String),

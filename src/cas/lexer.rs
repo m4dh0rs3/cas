@@ -15,7 +15,7 @@ pub(crate) struct Lexer<'s, 'e> {
 }
 
 #[derive(PartialEq)]
-pub(crate) enum LexerErr {
+pub enum LexerErr {
     EOF,
     Panic { msg: String, at: usize },
 }
