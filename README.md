@@ -18,6 +18,13 @@ simplify, differentiate, integrate and solve* algebraic expressions. This is a c
 - [ ] Integrate, differentiate expressions
 - [ ] Solve single- and multi-variable equations / inequalities
 
+### TODO
+
+#### Eval
+
+The current eval is not very sophisticated. It is functional, but can't
+simplify any expressions, if a subexpression remains unresolved.
+
 ### REPL
 
 This crate comes with an interactive comand-line-interface: Read-Eval-Print-Loop.
