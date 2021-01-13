@@ -7,7 +7,7 @@ pub mod prelude {
             env::{Def, Env},
             expr::{
                 atom::{number::Number, symbol::Symbol, Atom},
-                TypeErr,
+                Expr, TypeErr,
             },
         },
         cli::REPL,
