@@ -52,6 +52,15 @@ impl fmt::Display for Expr {
     }
 }
 
+impl fmt::Debug for Expr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Expr::Atom(atom) => write!(f, "{:?}", atom),
+            Expr::Call(call) => write!(f, "{:?}", call),
+        }
+    }
+}
+
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -70,6 +79,15 @@ impl fmt::Display for Atom {
     }
 }
 
+impl fmt::Debug for Atom {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Atom::Number(number) => write!(f, "{:?}", number),
+            Atom::Symbol(symbol) => write!(f, "{:?}", symbol),
+        }
+    }
+}
+
 impl fmt::Display for Call {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "(\u{1b}[0m{}", self.op)?;
@@ -80,9 +98,25 @@ impl fmt::Display for Call {
     }
 }
 
+impl fmt::Debug for Call {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({:?}", self.op)?;
+        for expr in &self.args {
+            write!(f, " {:?}", expr)?
+        }
+        write!(f, ")")
+    }
+}
+
 impl fmt::Display for Number {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "\u{1b}[91m{}\u{1b}[0m", self.0)
+    }
+}
+
+impl fmt::Debug for Number {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 
@@ -92,11 +126,23 @@ impl fmt::Display for Symbol {
     }
 }
 
+impl fmt::Debug for Symbol {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 impl fmt::Display for Op {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "\u{1b}[92;1m{:?}\u{1b}[0m", self)
+    }
+}
+
+impl fmt::Debug for Op {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "\u{1b}[92;1m{}\u{1b}[0m",
+            "{}",
             match self {
                 Op::Add => "+",
                 Op::Sub => "-",
