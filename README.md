@@ -43,7 +43,7 @@ This crate comes with an interactive comand-line-interface: Read-Eval-Print-Loop
 
 ### Algebraic expressions
 
-`4.3 - π^2 = sin y` is an algebraic expression. It consists of atoms (`4.3, π, 2, y`) and operators (`-, ^, =, sin`). Operators manipulate atoms. We normally white such expressions in *infix-notaion*, where one has to know the precedence and associativity of an operator. The exponent (`^`) must be evaluated before the the substraction (`-`), evon though it appears later. To evaluate the expression linearly, it has to be converted into polish noation, which is basicly a single function call of function calls (`= - 4.3 ^ π 2 sin y`).
+`4.3 - π^2 = sin y` is an algebraic expression. It consists of atoms (`4.3, π, 2, y`) and operators (`-, ^, =, sin`). Operators manipulate atoms. We normally write such expressions in *infix-notaion*, where one has to know the precedence and associativity of an operator. The exponent (`^`) must be evaluated before the the substraction (`-`), evon though it appears later. To evaluate the expression linearly, it has to be converted into polish noation, which is basicly a single function call of function calls (`= - 4.3 ^ π 2 sin y`).
 
 ### Lexer and parser
 
