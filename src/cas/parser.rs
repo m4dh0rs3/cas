@@ -7,6 +7,7 @@ use super::{
     lexer::{Lexer, LexerErr, Token},
 };
 
+/// Reporting an error while parsing.
 pub enum ParserErr {
     Empty,
     LexerErr(LexerErr),
@@ -14,6 +15,7 @@ pub enum ParserErr {
 }
 
 impl Expr {
+    /// Parse a string into an expression tree.
     pub fn parse(input: &str, env: &Env) -> Result<Expr, ParserErr> {
         let mut lexer = Lexer::new(input, env);
 

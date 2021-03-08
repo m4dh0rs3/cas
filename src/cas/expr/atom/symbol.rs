@@ -1,5 +1,6 @@
 use super::super::super::lexer::{Lexer, LexerErr, E_TOKEN_LEN};
 
+/// A string representing a variable or a function.
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Symbol(pub(crate) String);
 

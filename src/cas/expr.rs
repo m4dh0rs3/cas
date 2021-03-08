@@ -10,15 +10,18 @@ use {
 pub(crate) mod atom;
 pub(crate) mod call;
 
+/// Expression tree of either an function, root (`Call`) or a value, leaf (`Atom`).
 #[derive(Clone, PartialEq)]
 pub enum Expr {
     Atom(Atom),
     Call(Call),
 }
 
+/// Reporting an incompatible type.
 pub struct TypeErr(pub(crate) String);
 
 impl Expr {
+    /// Recursively turn a list expression into an actual list of expressions.
     pub(crate) fn list(self) -> Vec<Expr> {
         match self {
             Expr::Call(Call {
@@ -30,10 +33,12 @@ impl Expr {
                 list.append(&mut args.remove(0).list());
                 list
             }
+            // if it is not a list expression, just return a vec of the expression
             _ => vec![self],
         }
     }
 
+    /// Try to eval an expression into a number.
     pub fn number(&self, env: &mut Env) -> Result<Number, TypeErr> {
         match self {
             Expr::Atom(Atom::Number(number)) => Ok(number.clone()),
@@ -48,6 +53,7 @@ impl Expr {
         }
     }
 
+    /// Evaluate in an enviroment to another equal and or simpler expression.
     pub fn eval(&self, env: &mut Env) -> Result<Expr, TypeErr> {
         match self {
             Expr::Call(Call { op, args }) => {
@@ -57,6 +63,7 @@ impl Expr {
                         call: expr,
                     } = env.get(&call)?.clone()
                     {
+                        // define local definitions of a function call
                         let mut vars = Env::new();
 
                         for (var, symbol) in args.into_iter().zip(symbols.into_iter()) {
@@ -271,7 +278,9 @@ impl Expr {
         })
     }
 
+    // Sort an expression by precedence and associativity
     fn order(&mut self) {}
 
+    // Sum up etc.
     fn simplify(&mut self) {}
 }

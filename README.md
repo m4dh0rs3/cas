@@ -1,4 +1,4 @@
-# `CAS` – [*Computer-Algebra-System*](https://en.wikipedia.org/wiki/Computer_algebra_system) :leftwards_arrow_with_hook:
+# `Taschenrechner` – [*Computer-Algebra-System*](https://en.wikipedia.org/wiki/Computer_algebra_system) :leftwards_arrow_with_hook:
 
 > A **`CAS`** is an advanced symbolic calculator. It can *evaluate,
 simplify, differentiate, integrate and solve* algebraic expressions. This is a crate written in [Rust](https://www.rust-lang.org/).
@@ -29,6 +29,14 @@ simplify any expressions, if a subexpression remains unresolved.
 
 This crate comes with an interactive comand-line-interface: Read-Eval-Print-Loop.
 
+```Rust
+use cas::prelude::*;
+
+fn main() {
+    REPL::start();
+}
+```
+
 ### Built-in functions and constants
 
 (for a full complete list see [`default_env.txt`](https://github.com/m4dh0rs3/cas/blob/master/default_env.txt))
@@ -40,6 +48,8 @@ This crate comes with an interactive comand-line-interface: Read-Eval-Print-Loop
 ### How to build see [Cargo for Rust](https://doc.rust-lang.org/cargo/guide/working-on-an-existing-project.html)
 
 ## Technical
+
+> Also see my [blog post](https://m4dh0rs3.github.io/posts/cas/)!
 
 ### Algebraic expressions
 

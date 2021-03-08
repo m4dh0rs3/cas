@@ -1,6 +1,8 @@
 [package]
-name = "cas"
-version = "0.2.0"
+name = "taschenrechner"
+description = "Computer-Algebra-System including a REPL."
+license = "GPL-3.0-only"
+version = "0.2.2"
 authors = ["m4dh0rs3 <schoeps.benedikt@gmail.com>"]
 edition = "2018"
 

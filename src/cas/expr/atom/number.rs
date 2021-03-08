@@ -4,6 +4,7 @@ use super::super::super::lexer::{
 
 mod ops;
 
+/// Wrapper of a f64. Maybe implement arbitrary precicion in the future.
 #[derive(Clone, Copy, PartialEq)]
 pub struct Number(pub(crate) f64);
 

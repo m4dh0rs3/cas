@@ -7,6 +7,7 @@ use {
 pub(crate) mod number;
 pub(crate) mod symbol;
 
+/// A leaf node, containing a actual value.
 #[derive(Clone, PartialEq)]
 pub enum Atom {
     Number(Number),
