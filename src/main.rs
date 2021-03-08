@@ -1,4 +1,4 @@
-use cas::prelude::*;
+use taschenrechner::prelude::*;
 
 fn main() {
     REPL::start();
